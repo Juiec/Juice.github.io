@@ -1,4 +1,4 @@
-import Hero from './sections/Hero.jsx'
+import Hero from '3dPortfolio/src/Hero.jsx'
 const App = () => {
   return (
     <main>
