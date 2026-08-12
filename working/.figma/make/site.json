@@ -1,0 +1,10 @@
+{
+  "description": "This portfolio web application showcases creative projects and skills, allowing users to present their work visually and connect with potential clients.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
