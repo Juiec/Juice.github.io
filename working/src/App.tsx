@@ -6,6 +6,23 @@ import {
   type PointerEvent,
 } from "react"
 
+// ─── Responsive UI  ───────────────────────────────────────────────────
+function useMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    window.addEventListener("resize", handleResize)
+
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  return isMobile
+}
+
 // ─── Faint grid background ───────────────────────────────────────────────────
 function GridBackground() {
   const [hovering, setHovering] = useState(false)
@@ -58,7 +75,10 @@ function GridBackground() {
 function WireframeCube() {
   const faces = ["front", "back", "left", "right", "top", "bottom"]
   return (
-    <div className="wireframe-scene" style={{ width: 320, height: 320, position: "relative" }}>
+    <div
+      className="wireframe-scene"
+      style={{ width: 320, height: 320, position: "relative" }}
+    >
       {[
         { top: "8%", left: "10%", delay: "0s" },
         { top: "15%", right: "12%", delay: "0.8s" },
@@ -67,15 +87,38 @@ function WireframeCube() {
         { top: "40%", left: "4%", delay: "1.8s" },
         { top: "30%", right: "6%", delay: "1.1s" },
       ].map((s, i) => (
-        <span key={i} className="star" style={{ ...(s as CSSProperties), animationDelay: s.delay }}>✦</span>
+        <span
+          key={i}
+          className="star"
+          style={{ ...s as CSSProperties, animationDelay: s.delay }}
+        >
+          ✦
+        </span>
       ))}
-      <div className="wireframe-orbit" style={{ width: 360, height: 130, animation: "orbit-a 8s linear infinite" }} />
-      <div className="wireframe-orbit" style={{ width: 300, height: 110, animation: "orbit-b 14s linear infinite", opacity: 0.5 }} />
+      <div
+        className="wireframe-orbit"
+        style={{
+          width: 360,
+          height: 130,
+          animation: "orbit-a 8s linear infinite",
+        }}
+      />
+      <div
+        className="wireframe-orbit"
+        style={{
+          width: 300,
+          height: 110,
+          animation: "orbit-b 14s linear infinite",
+          opacity: 0.5,
+        }}
+      />
       <div className="wireframe-cube" style={{ marginTop: 20 }}>
         {faces.map((f) => (
           <div key={f} className={`wireframe-face face-${f}`}>
             <div className="face-inner">
-              {Array.from({ length: 9 }).map((_, i) => <span key={i} />)}
+              {Array.from({ length: 9 }).map((_, i) => (
+                <span key={i} />
+              ))}
             </div>
           </div>
         ))}
@@ -86,15 +129,79 @@ function WireframeCube() {
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
 function Nav() {
+  const isMobile = useMobile()
   const [scrolled, setScrolled] = useState(false)
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20)
     window.addEventListener("scroll", fn)
+
     return () => window.removeEventListener("scroll", fn)
   }, [])
 
-  const links = ["About", "Projects", "Skills", "Contact"]
+  const links = [
+    { label: "About", href: "#mission", icon: "◉" },
+    { label: "Projects", href: "#projects", icon: "□" },
+    { label: "Skills", href: "#skills", icon: "△" },
+    { label: "Contact", href: "#contact", icon: "✦" },
+  ]
 
+  // MOBILE NAV
+  if (isMobile) {
+    return (
+      <nav
+        style={{
+          position: "fixed",
+          bottom: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "calc(100% - 24px)",
+          maxWidth: 420,
+          height: 68,
+          zIndex: 1000,
+
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+
+          background: "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(17,17,16,0.08)",
+          borderRadius: 18,
+
+          boxShadow:
+            "0 8px 32px rgba(17,17,16,0.12), 0 2px 8px rgba(17,17,16,0.06)",
+        }}
+      >
+        {links.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 4,
+
+              color: "#111110",
+              textDecoration: "none",
+
+              fontFamily: "var(--font-body)",
+              fontSize: 11,
+              fontWeight: 500,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>{link.icon}</span>
+
+            <span>{link.label}</span>
+          </a>
+        ))}
+      </nav>
+    )
+  }
+
+  // DESKTOP NAV
   return (
     <nav
       style={{
@@ -102,21 +209,28 @@ function Nav() {
         top: 16,
         left: "50%",
         transform: "translateX(-50%)",
+
         zIndex: 100,
+
         width: "min(860px, calc(100% - 32px))",
+
         background: "rgba(255,255,255,0.92)",
         backdropFilter: "blur(12px)",
+
         borderRadius: 14,
         border: "1px solid rgba(17,17,16,0.08)",
+
         boxShadow: scrolled
           ? "0 8px 32px rgba(17,17,16,0.12), 0 2px 8px rgba(17,17,16,0.06)"
           : "0 2px 16px rgba(17,17,16,0.08)",
+
         padding: "0 24px",
+
+        height: 56,
+
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        height: 56,
-        transition: "box-shadow 0.3s",
       }}
     >
       <span
@@ -129,58 +243,30 @@ function Nav() {
       >
         Learning Designer
       </span>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        {links.map((l) => (
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        {links.map((link) => (
           <a
-            key={l}
-            href={`#${l.toLowerCase()}`}
+            key={link.label}
+            href={link.href}
             style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 14,
-              fontWeight: 500,
               color: "#6b6b68",
               textDecoration: "none",
               padding: "6px 12px",
               borderRadius: 8,
-              transition: "color 0.2s, background 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              ;(e.target as HTMLElement).style.color = "#111110"
-              ;(e.target as HTMLElement).style.background =
-                "rgba(17,17,16,0.05)"
-            }}
-            onMouseLeave={(e) => {
-              ;(e.target as HTMLElement).style.color = "#6b6b68"
-              ;(e.target as HTMLElement).style.background = "transparent"
+              fontSize: 14,
+              fontWeight: 500,
             }}
           >
-            {l}
+            {link.label}
           </a>
         ))}
-        <a
-          href="#contact"
-          style={{
-            marginLeft: 4,
-            background: "#111110",
-            color: "#f8f8f6",
-            fontFamily: "var(--font-body)",
-            fontSize: 14,
-            fontWeight: 600,
-            padding: "8px 18px",
-            borderRadius: 9,
-            textDecoration: "none",
-            transition: "background 0.2s, transform 0.15s",
-            display: "inline-block",
-          }}
-          onMouseEnter={(e) => {
-            ;(e.target as HTMLElement).style.background = "#2a2a28"
-          }}
-          onMouseLeave={(e) => {
-            ;(e.target as HTMLElement).style.background = "#111110"
-          }}
-        >
-          Contact
-        </a>
       </div>
     </nav>
   )
@@ -188,18 +274,20 @@ function Nav() {
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 function Hero() {
+  const isMobile = useMobile()
   return (
     <section
       id="hero"
       style={{
         minHeight: "100vh",
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: 0,
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
         alignItems: "center",
-        padding: "100px 64px 64px",
+        padding: isMobile ? "120px 24px 60px" : "100px 64px 64px",
         maxWidth: 1200,
         margin: "0 auto",
+        textAlign: isMobile ? "center" : "left",
+        boxSizing: "border-box",
       }}
     >
       <div>
@@ -214,17 +302,18 @@ function Hero() {
             marginBottom: 24,
           }}
         >
-          Machine Learning Engineer
+          Machine Learning Engineer • Learning Designer
         </p>
         <h1
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(52px,6vw,84px)",
+            fontSize: "clamp(36px,6vw,84px)",
             fontWeight: 300,
             lineHeight: 1.05,
             letterSpacing: "-0.03em",
             margin: "0 0 24px",
             color: "#111110",
+            wordWrap: "break-word",
           }}
         >
           Bridging AI
@@ -261,26 +350,37 @@ function Hero() {
             fontSize: 17,
             lineHeight: 1.7,
             color: "#6b6b68",
-            maxWidth: 380,
+            maxWidth: isMobile ? "100%" : 380,
             marginBottom: 40,
+            marginInline: isMobile ? "auto" : undefined,
           }}
         >
-          Deploying trustworthy AI systems for EdTech and Computer Vision.
-          Practical solutions for real-world impact.
+          I build AI systems that are practical, explainable, and designed for
+          real educational environments. My work spans AI literacy, computer
+          vision, and human-centered design.
         </p>
-        <div style={{ display: "flex", gap: 12 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: isMobile ? "stretch" : "center",
+          }}
+        >
           <a
             href="#projects"
             style={{
               background: "#111110",
               color: "#f8f8f6",
-              fontFamily: "var(--font-body)",
-              fontSize: 15,
-              fontWeight: 600,
               padding: "12px 28px",
               borderRadius: 10,
               textDecoration: "none",
+              width: isMobile ? "100%" : "auto",
+              fontFamily: "var(--font-body)",
+              fontSize: 15,
+              fontWeight: 600,
               transition: "background 0.2s",
+              textAlign: "center",
             }}
             onMouseEnter={(e) =>
               ((e.target as HTMLElement).style.background = "#2a2a28")
@@ -294,13 +394,15 @@ function Hero() {
           <a
             href="#contact"
             style={{
+              borderRadius: 10,
+              width: isMobile ? "100%" : "auto",
+              textAlign: "center",
               background: "transparent",
               color: "#111110",
               fontFamily: "var(--font-body)",
               fontSize: 15,
               fontWeight: 500,
               padding: "12px 28px",
-              borderRadius: 10,
               textDecoration: "none",
               border: "1.5px solid rgba(17,17,16,0.2)",
               transition: "border-color 0.2s",
@@ -314,7 +416,7 @@ function Hero() {
                 "rgba(17,17,16,0.2)")
             }
           >
-            Get in touch
+            Read Research
           </a>
         </div>
       </div>
@@ -322,8 +424,9 @@ function Hero() {
   )
 }
 
-// ─── About ───────────────────────────────────────────────────────────────────
-function About() {
+// ─── Mission ───────────────────────────────────────────────────────────────────
+function Mission() {
+  const isMobile = useMobile()
   const stats = [
     { value: "CUHK", label: "B.Sc. Learning Design" },
     { value: "EdTech", label: "AI Literacy Focus" },
@@ -333,14 +436,18 @@ function About() {
 
   return (
     <section
-      id="about"
-      style={{ padding: "100px 64px", maxWidth: 1200, margin: "0 auto" }}
+      id="mission"
+      style={{
+        padding: isMobile ? "80px 24px" : "100px 64px",
+        maxWidth: 1200,
+        margin: "0 auto",
+      }}
     >
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 80,
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? 40 : 80,
           alignItems: "center",
         }}
       >
@@ -356,17 +463,18 @@ function About() {
               marginBottom: 16,
             }}
           >
-            About
+            What I'm building
           </p>
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(36px,4vw,52px)",
+              fontSize: "clamp(28px,4vw,52px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               margin: "0 0 24px",
               color: "#111110",
+              wordWrap: "break-word",
             }}
           >
             Building at the
@@ -381,12 +489,17 @@ function About() {
               fontSize: 16,
               lineHeight: 1.75,
               color: "#6b6b68",
-              marginBottom: 16,
+              maxWidth: isMobile ? "100%" : 380,
+              marginBottom: 40,
+              marginInline: isMobile ? "auto" : undefined,
+              minWidth: 0,
+              overflowWrap: "break-word",
             }}
           >
-            I am a Machine Learning Engineer specializing in Educational
-            Technology. My work bridges technical engineering with pedagogical
-            theory.
+            The challenge is no longer whether people use AI. The challenge is
+            helping people use it responsibly, transparently, and effectively.
+            My work explores how AI systems can support learning while
+            preserving trust, reflection, and human judgment.
           </p>
           <p
             style={{
@@ -395,6 +508,8 @@ function About() {
               lineHeight: 1.75,
               color: "#6b6b68",
               margin: 0,
+              minWidth: 0,
+              overflowWrap: "break-word",
             }}
           >
             I build deployable AI solutions that are practical, explainable, and
@@ -403,7 +518,11 @@ function About() {
           </p>
         </div>
         <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: window.innerWidth < 900 ? "1fr" : "1fr 1fr",
+            gap: 16,
+          }}
         >
           {stats.map((s) => (
             <div
@@ -432,7 +551,7 @@ function About() {
               <div
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: 48,
+                  fontSize: isMobile ? 36 : 48,
                   fontWeight: 600,
                   color: "#111110",
                   lineHeight: 1,
@@ -461,6 +580,10 @@ function About() {
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
 function Projects() {
+  const isMobile = useMobile()
+  const collapsedHeight = isMobile ? 900 : 380
+  const [showAllProjects, setShowAllProjects] = useState(false)
+
   const projects = [
     {
       title: "Trust-Based Writing Toolkit",
@@ -483,12 +606,31 @@ function Projects() {
       tech: ["Python", "VideoPose3D", "YOLO"],
       tag: "Research",
     },
+    {
+      title: "AI-Powered Autonomous Patrolling Solution",
+      year: "2026",
+      desc: "Autonomous AI patrolling system integrating computer vision and edge AI.",
+      tech: ["Python", "YOLO", "Edge AI"],
+      tag: "Computer Vision",
+    },
+    {
+      title: "Another Project",
+      year: "2024",
+      desc: "Project description.",
+      tech: ["React", "TypeScript"],
+      tag: "Development",
+    },
   ]
 
   return (
     <section
       id="projects"
-      style={{ padding: "100px 64px", maxWidth: 1200, margin: "0 auto" }}
+      style={{
+        padding: isMobile ? "60px 24px" : "100px 64px",
+        maxWidth: 1200,
+        margin: "0 auto",
+        boxSizing: "border-box",
+      }}
     >
       <div
         style={{
@@ -496,6 +638,8 @@ function Projects() {
           justifyContent: "space-between",
           alignItems: "flex-end",
           marginBottom: 48,
+          flexDirection: isMobile ? "column" : "row",
+          gap: 16,
         }}
       >
         <div>
@@ -512,10 +656,11 @@ function Projects() {
           >
             Selected Work
           </p>
+
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(36px,4vw,52px)",
+              fontSize: "clamp(28px,4vw,52px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               margin: 0,
@@ -525,259 +670,305 @@ function Projects() {
             Projects
           </h2>
         </div>
-        <a
-          href="#contact"
+
+        <button
+          onClick={() => setShowAllProjects(!showAllProjects)}
           style={{
             fontFamily: "var(--font-body)",
             fontSize: 14,
             color: "#6b6b68",
-            textDecoration: "none",
+            background: "none",
+            border: "none",
             borderBottom: "1px solid rgba(17,17,16,0.2)",
-            paddingBottom: 2,
+            cursor: "pointer",
+            padding: 0,
           }}
         >
-          All projects →
-        </a>
+          {showAllProjects ? "Show Less ↑" : "All Projects →"}
+        </button>
       </div>
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 20,
+            maxHeight: showAllProjects
+              ? "2000px"
+              : `${collapsedHeight}px`,
+            overflow: "hidden",
+            transition:
+              "max-height 0.8s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
-        {projects.map((p) => (
-          <article
-            key={p.title}
-            style={{
-              background: "#ffffff",
-              border: "1px solid rgba(17,17,16,0.08)",
-              borderRadius: 16,
-              padding: "32px 28px",
-              boxShadow: "0 1px 4px rgba(17,17,16,0.04)",
-              display: "flex",
-              flexDirection: "column",
-              gap: 0,
-              cursor: "pointer",
-              transition: "box-shadow 0.25s, transform 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              ;(e.currentTarget as HTMLElement).style.boxShadow =
-                "0 12px 40px rgba(17,17,16,0.12)"
-              ;(e.currentTarget as HTMLElement).style.transform =
-                "translateY(-3px)"
-            }}
-            onMouseLeave={(e) => {
-              ;(e.currentTarget as HTMLElement).style.boxShadow =
-                "0 1px 4px rgba(17,17,16,0.04)"
-              ;(e.currentTarget as HTMLElement).style.transform =
-                "translateY(0)"
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 20,
-              }}
-            >
-              <span
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)",
+            gap: 20,
+          }}
+        >
+          {projects.map((p, index) => {
+            const hidden = !showAllProjects && index >= 3
+
+            return (
+              <article
+                key={p.title}
                 style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#6b6b68",
-                  background: "rgba(17,17,16,0.05)",
-                  padding: "4px 10px",
-                  borderRadius: 6,
+                  background: "#ffffff",
+                  border: "1px solid rgba(17,17,16,0.08)",
+                  borderRadius: 16,
+                  padding: "32px 28px",
+                  boxShadow: "0 1px 4px rgba(17,17,16,0.04)",
+
+                  display: "flex",
+                  flexDirection: "column",
+
+                  opacity: hidden ? 0 : 1,
+                  transform: hidden
+                    ? "translateY(40px)"
+                    : "translateY(0)",
+
+                  pointerEvents: hidden ? "none" : "auto",
+
+                  transition: `all 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${
+                    index * 0.08
+                  }s`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 12px 40px rgba(17,17,16,0.12)"
+                  e.currentTarget.style.transform =
+                    hidden
+                      ? "translateY(40px)"
+                      : "translateY(-3px)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 1px 4px rgba(17,17,16,0.04)"
+                  e.currentTarget.style.transform =
+                    hidden
+                      ? "translateY(40px)"
+                      : "translateY(0)"
                 }}
               >
-                {p.tag}
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  color: "#6b6b68",
-                }}
-              >
-                {p.year}
-              </span>
-            </div>
-
-            <h3
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 22,
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-                color: "#111110",
-                margin: "0 0 12px",
-              }}
-            >
-              {p.title}
-            </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 14,
-                lineHeight: 1.7,
-                color: "#6b6b68",
-                margin: "0 0 24px",
-                flexGrow: 1,
-              }}
-            >
-              {p.desc}
-            </p>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {p.tech.map((t) => (
-                <span
-                  key={t}
+                <div
                   style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 12,
-                    fontWeight: 500,
-                    color: "#111110",
-                    border: "1px solid rgba(17,17,16,0.15)",
-                    padding: "3px 10px",
-                    borderRadius: 100,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 20,
                   }}
                 >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </article>
-        ))}
+                  <span
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: "#6b6b68",
+                      background: "rgba(17,17,16,0.05)",
+                      padding: "4px 10px",
+                      borderRadius: 6,
+                    }}
+                  >
+                    {p.tag}
+                  </span>
+
+                  <span
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: 13,
+                      color: "#6b6b68",
+                    }}
+                  >
+                    {p.year}
+                  </span>
+                </div>
+
+                <h3
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 22,
+                    fontWeight: 400,
+                    letterSpacing: "-0.01em",
+                    color: "#111110",
+                    margin: "0 0 12px",
+                  }}
+                >
+                  {p.title}
+                </h3>
+
+                <p
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                    color: "#6b6b68",
+                    margin: "0 0 24px",
+                    flexGrow: 1,
+                  }}
+                >
+                  {p.desc}
+                </p>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 6,
+                  }}
+                >
+                  {p.tech.map((t) => (
+                    <span
+                      key={t}
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 12,
+                        fontWeight: 500,
+                        color: "#111110",
+                        border: "1px solid rgba(17,17,16,0.15)",
+                        padding: "3px 10px",
+                        borderRadius: 100,
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
     </section>
   )
 }
-
-// ─── Skills ───────────────────────────────────────────────────────────────────
-function Skills() {
-  const categories = [
-    {
-      label: "Engineering",
-      skills: [
-        "Python",
-        "PyTorch",
-        "TensorFlow",
-        "React",
-        "Tailwind CSS",
-        "Node.js",
-      ],
-    },
-    {
-      label: "Computer Vision",
-      skills: ["YOLO", "YOLOE", "MediaPipe", "OpenCV", "VideoPose3D", "NumPy"],
-    },
-    {
-      label: "Infrastructure",
-      skills: ["NVIDIA Jetson", "Edge AI", "Git", "Docker", "Linux", "QA"],
-    },
+// ─── SkillMarquee ───────────────────────────────────────────────────────────────────
+function SkillMarquee() {
+  const row1 = [
+    "Python",
+    "PyTorch",
+    "TensorFlow",
+    "React",
+    "Tailwind",
+    "Node.js",
   ]
+  
+  const row2 = [
+    "YOLO",
+    "MediaPipe",
+    "OpenCV",
+    "VideoPose3D",
+    "Edge AI",
+    "Computer Vision",
+  ]
+  
+  const row3 = [
+    "AI Literacy",
+    "Learning Design",
+    "EdTech",
+    "Research",
+    "Human-Centered AI",
+    "Responsible AI",
+  ]
+
+  return (
+    <div className="skills-marquee">
+      <div className="marquee-track marquee-left">
+        {[...row1, ...row1, ...row1].map((skill, index) => (
+          <div key={`top-${index}`} className="marquee-item">
+            <span
+              className={`skill-word ${
+                skill === "React" ? "active" : ""
+              }`}
+            >
+              {skill}
+            </span>
+            <span className="skill-dot">•</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="marquee-track marquee-right">
+        {[...row2, ...row2, ...row2].map((skill, index) => (
+          <div key={`bottom-${index}`} className="marquee-item">
+            <span
+              className={`skill-word ${
+                skill === "YOLO" ? "active" : ""
+              }`}
+            >
+              {skill}
+            </span>
+            <span className="skill-dot">•</span>
+          </div>
+        ))}
+      </div>
+      
+      <div className="marquee-track marquee-left-slow">
+        {[...row3, ...row3, ...row3].map((skill, index) => (
+          <div key={`third-${index}`} className="marquee-item">
+            <span className="skill-word">{skill}</span>
+            <span className="skill-dot">•</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+// ─── Skills Section Wrapper ──────────────────────────────────────────────
+function Skills() {
+  const isMobile = useMobile()
 
   return (
     <section
       id="skills"
-      style={{ padding: "100px 64px", maxWidth: 1200, margin: "0 auto" }}
+      style={{
+        padding: isMobile ? "60px 0" : "100px 0",
+        overflow: "hidden",
+      }}
     >
-      <p
+      <div
         style={{
-          fontFamily: "var(--font-body)",
-          fontSize: 13,
-          fontWeight: 600,
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "#6b6b68",
-          marginBottom: 12,
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: isMobile ? "0 24px" : "0 64px",
+          marginBottom: 56,
         }}
       >
-        Capabilities
-      </p>
-      <h2
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "clamp(36px,4vw,52px)",
-          fontWeight: 400,
-          letterSpacing: "-0.02em",
-          margin: "0 0 56px",
-          color: "#111110",
-        }}
-      >
-        Skills
-      </h2>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-        {categories.map((cat) => (
-          <div
-            key={cat.label}
-            style={{ display: "flex", alignItems: "flex-start", gap: 40 }}
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: 13,
+            fontWeight: 600,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "#6b6b68",
+            marginBottom: 12,
+          }}
+        >
+          Capabilities
+        </p>
+        
+        <h2
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(28px,4vw,52px)",
+            fontWeight: 400,
+            letterSpacing: "-0.02em",
+            margin: 0,
+            color: "#111110",
+          }}
           >
-            <div style={{ width: 120, flexShrink: 0, paddingTop: 6 }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#6b6b68",
-                }}
-              >
-                {cat.label}
-              </span>
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {cat.skills.map((s) => (
-                <span
-                  key={s}
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 14,
-                    fontWeight: 400,
-                    color: "#111110",
-                    border: "1.5px solid rgba(17,17,16,0.15)",
-                    padding: "7px 16px",
-                    borderRadius: 100,
-                    background: "#ffffff",
-                    transition: "background 0.15s, border-color 0.15s",
-                    cursor: "default",
-                  }}
-                  onMouseEnter={(e) => {
-                    ;(e.currentTarget as HTMLElement).style.background =
-                      "#111110"
-                    ;(e.currentTarget as HTMLElement).style.color = "#f8f8f6"
-                    ;(e.currentTarget as HTMLElement).style.borderColor =
-                      "#111110"
-                  }}
-                  onMouseLeave={(e) => {
-                    ;(e.currentTarget as HTMLElement).style.background =
-                      "#ffffff"
-                    ;(e.currentTarget as HTMLElement).style.color = "#111110"
-                    ;(e.currentTarget as HTMLElement).style.borderColor =
-                      "rgba(17,17,16,0.15)"
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
+            Skills
+        </h2>
       </div>
+
+      <SkillMarquee />
     </section>
   )
 }
-
 // ─── Contact ──────────────────────────────────────────────────────────────────
 function Contact() {
+  const isMobile = useMobile()
   const [form, setForm] = useState({ name: "", email: "", message: "" })
   const [sent, setSent] = useState(false)
 
@@ -794,7 +985,12 @@ function Contact() {
   return (
     <section
       id="contact"
-      style={{ padding: "100px 64px 140px", maxWidth: 1200, margin: "0 auto" }}
+      style={{
+        padding: isMobile ? "60px 24px 80px" : "100px 64px 140px",
+        maxWidth: 1200,
+        margin: "0 auto",
+        boxSizing: "border-box",
+      }}
     >
       <p
         style={{
@@ -812,11 +1008,12 @@ function Contact() {
       <h2
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "clamp(36px,4vw,52px)",
+          fontSize: "clamp(28px,4vw,52px)",
           fontWeight: 400,
           letterSpacing: "-0.02em",
           margin: "0 0 64px",
           color: "#111110",
+          wordWrap: "break-word",
         }}
       >
         Get in touch
@@ -825,8 +1022,8 @@ function Contact() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 80,
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? 48 : 80,
           alignItems: "start",
         }}
       >
@@ -916,6 +1113,7 @@ function Contact() {
                   fontWeight: 400,
                   color: "#111110",
                   margin: "0 0 12px",
+                  wordWrap: "break-word",
                 }}
               >
                 Message sent.
@@ -959,6 +1157,7 @@ function Contact() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, name: e.target.value }))
                   }
+                  style={{ width: "100%", boxSizing: "border-box" }}
                 />
               </div>
               <div>
@@ -985,6 +1184,7 @@ function Contact() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, email: e.target.value }))
                   }
+                  style={{ width: "100%", boxSizing: "border-box" }}
                 />
               </div>
               <div>
@@ -1007,7 +1207,11 @@ function Contact() {
                   required
                   placeholder="Tell me about your project..."
                   rows={4}
-                  style={{ resize: "none" }}
+                  style={{
+                    resize: "none",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
                   value={form.message}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, message: e.target.value }))
@@ -1028,6 +1232,7 @@ function Contact() {
                   cursor: "pointer",
                   alignSelf: "flex-start",
                   transition: "background 0.2s",
+                  width: "100%",
                 }}
                 onMouseEnter={(e) =>
                   ((e.currentTarget as HTMLElement).style.background =
@@ -1050,14 +1255,18 @@ function Contact() {
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 function Footer() {
+  const isMobile = useMobile()
   return (
     <footer
       style={{
         borderTop: "1px solid rgba(17,17,16,0.08)",
-        padding: "24px 64px",
+        padding: isMobile ? "24px 24px" : "24px 64px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        flexWrap: "wrap",
+        gap: 16,
+        boxSizing: "border-box",
       }}
     >
       <span
@@ -1086,6 +1295,7 @@ function Footer() {
 // ─── App ──────────────────────────────────────────────────────────────────────
 // ─── Scrolling cube fixed background ─────────────────────────────────────────
 function ScrollingCube() {
+  const isMobile = useMobile()
   const [smoothProgress, setSmoothProgress] = useState(0)
   const rawProgress = useRef(0)
   const rafRef = useRef<number>(0)
@@ -1098,9 +1308,11 @@ function ScrollingCube() {
     window.addEventListener("scroll", onScroll, { passive: true })
 
     const tick = () => {
-      setSmoothProgress(prev => {
+      setSmoothProgress((prev) => {
         const next = prev + (rawProgress.current - prev) * 0.07
-        return Math.abs(next - rawProgress.current) < 0.0001 ? rawProgress.current : next
+        return Math.abs(next - rawProgress.current) < 0.0001
+          ? rawProgress.current
+          : next
       })
       rafRef.current = requestAnimationFrame(tick)
     }
@@ -1113,20 +1325,21 @@ function ScrollingCube() {
   }, [])
 
   // Ease in-out cubic for smoother feel
-  const eased = smoothProgress < 0.5
-    ? 4 * smoothProgress ** 3
-    : 1 - (-2 * smoothProgress + 2) ** 3 / 2
+  const eased =
+    smoothProgress < 0.5
+      ? 4 * smoothProgress ** 3
+      : 1 - (-2 * smoothProgress + 2) ** 3 / 2
 
   const scale = 1 + eased * 2.6
-  const opacity = 1 - eased * 0.88
+  const opacity = isMobile ? 0 : 1 - eased * 0.6
 
   return (
     <div
       style={{
         position: "fixed",
         top: 0,
-        right: "-12%",
-        width: "54%",
+        right: isMobile ? "-20%" : "-12%",
+        width: isMobile ? "80%" : "54%",
         height: "100vh",
         display: "flex",
         alignItems: "center",
@@ -1145,20 +1358,28 @@ function ScrollingCube() {
 }
 
 export default function App() {
+  const isMobile = useMobile()
   return (
     <div
       style={{
         background: "#f8f8f6",
         minHeight: "100vh",
         position: "relative",
+        overflowX: "hidden",
       }}
     >
       <GridBackground />
       <ScrollingCube />
-      <div style={{ position: "relative", zIndex: 1 }}>
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          paddingBottom: isMobile ? 100 : 0,
+        }}
+      >
         <Nav />
         <Hero />
-        <About />
+        <Mission />
         <Projects />
         <Skills />
         <Contact />
