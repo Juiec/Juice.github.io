@@ -1044,6 +1044,7 @@ function Contact() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        overflow: "hidden",
       }}
     >
       {/* Main content */}
@@ -1051,10 +1052,10 @@ function Contact() {
         maxWidth: 1200,
         margin: "0 auto",
         width: "100%",
-        padding: sm ? "60px 20px 48px" : isMobile ? "80px 32px 48px" : "100px 64px 56px",
+        padding: sm ? "52px 20px 20px" : isMobile ? "72px 32px 20px" : "clamp(52px, 5vw, 88px) clamp(28px, 4vw, 64px) 20px",
       }}>
         <Eyebrow>Let's talk</Eyebrow>
-        <SectionHeading style={{ margin: sm ? "0 0 36px" : "0 0 56px" }}>Get in touch</SectionHeading>
+        <SectionHeading style={{ margin: sm ? "0 0 28px" : "0 0 32px", fontSize: "clamp(2.8rem, 5vw, 6rem)" }}>Get in touch</SectionHeading>
 
         <div
           className="contact-grid"
@@ -1066,7 +1067,7 @@ function Contact() {
         >
           {/* Left — intro + social links */}
           <div>
-            <p style={{ fontSize: sm ? 14 : 16, lineHeight: 1.8, color: "#6b6b68", marginBottom: sm ? 28 : 40, maxWidth: 360 }}>
+            <p style={{ fontSize: sm ? 14 : "clamp(14px, 1.25vw, 16px)", lineHeight: 1.8, color: "#6b6b68", marginBottom: sm ? 24 : 28, maxWidth: 360 }}>
               Currently open to ML Engineering roles in EdTech and Computer Vision.
               If you're building something in that space, I'd love to hear about it.
             </p>
@@ -1139,7 +1140,7 @@ function Contact() {
           alignItems: "center",
           flexWrap: "wrap",
           gap: 12,
-          padding: sm ? "14px 20px 20px" : "16px 32px 24px",
+          padding: sm ? "12px 20px 18px" : "12px 32px 18px",
         }}>
           <span className="font-display" style={{ fontSize: 15, fontWeight: 600 }}>Portfolio</span>
           <span style={{ fontSize: 12, color: "#6b6b68" }}>© 2026 — ML Engineer</span>
