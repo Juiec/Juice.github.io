@@ -6,6 +6,7 @@ import {
   type CSSProperties,
   type PointerEvent,
 } from "react"
+import * as THREE from "three"
 
 // ─── Responsive hooks ────────────────────────────────────────────────────────
 function useBreakpoint() {
@@ -119,18 +120,109 @@ function WireframeCube() {
           ✦
         </span>
       ))}
-      <div className="wireframe-orbit" style={{ width: 624, height: 228, animation: "orbit-a 8s linear infinite" }} />
-      <div className="wireframe-orbit" style={{ width: 528, height: 192, animation: "orbit-b 14s linear infinite", opacity: 0.5 }} />
-      <div className="wireframe-cube" style={{ marginTop: 20 }}>
-        {faces.map((f) => (
-          <div key={f} className={`wireframe-face face-${f}`}>
-            <div className="face-inner">
-              {Array.from({ length: 9 }).map((_, i) => <span key={i} />)}
+      <div className="wireframe-center">
+        <div className="wireframe-orbit" style={{ width: 520, height: 520, border: "1.5px solid rgba(17,17,16,0.28)", animation: "orbit-a 10s linear infinite" }} />
+        <div className="wireframe-orbit" style={{ width: 460, height: 460, border: "1px solid rgba(17,17,16,0.18)", animation: "orbit-b 17s linear infinite" }} />
+        <div className="wireframe-cube">
+          {faces.map((f) => (
+            <div key={f} className={`wireframe-face face-${f}`}>
+              <div className="face-inner">
+                {Array.from({ length: 9 }).map((_, i) => <span key={i} />)}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
+  )
+}
+
+// ─── Logo (Three.js) ─────────────────────────────────────────────────────────
+function LogoCanvas({ triggerCount, onClick }: { triggerCount: number; onClick?: () => void }) {
+  const divRef = useRef<HTMLDivElement>(null)
+  const stateRef = useRef<{ t: number; spinning: boolean; spinT: number; frameId: number } | null>(null)
+
+  useEffect(() => {
+    const el = divRef.current
+    if (!el) return
+    const W = 200, H = 36
+
+    const tc = document.createElement("canvas")
+    tc.width = W * 2; tc.height = H * 2
+    const ctx = tc.getContext("2d")!
+    const texture = new THREE.CanvasTexture(tc)
+
+    const draw = () => {
+      ctx.clearRect(0, 0, tc.width, tc.height)
+      ctx.font = `600 ${H * 1.1}px Fraunces, Georgia, serif`
+      ctx.fillStyle = "#111110"
+      ctx.textBaseline = "middle"
+      ctx.textAlign = "left"
+      ctx.fillText("Learning Designer", 0, H)
+      texture.needsUpdate = true
+    }
+    document.fonts.ready.then(draw)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer.setSize(W, H)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setClearColor(0x000000, 0)
+    el.appendChild(renderer.domElement)
+    renderer.domElement.style.display = "block"
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.OrthographicCamera(-W / 2, W / 2, H / 2, -H / 2, 0.1, 1000)
+    camera.position.z = 100
+
+    const geo = new THREE.PlaneGeometry(W, H)
+    const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide })
+    const plane = new THREE.Mesh(geo, mat)
+    scene.add(plane)
+
+    const s = { t: 0, spinning: false, spinT: 0, frameId: 0 }
+    stateRef.current = s
+
+    const easeBack = (t: number) => {
+      const c = 1.70158 * 1.525
+      return t < 0.5
+        ? ((2 * t) ** 2 * ((c + 1) * 2 * t - c)) / 2
+        : ((2 * t - 2) ** 2 * ((c + 1) * (t * 2 - 2) + c) + 2) / 2
+    }
+
+    const tick = () => {
+      s.frameId = requestAnimationFrame(tick)
+      s.t += 0.016
+      if (s.spinning) {
+        s.spinT = Math.min(s.spinT + 0.02, 1)
+        plane.rotation.y = easeBack(s.spinT) * Math.PI * 2
+        if (s.spinT >= 1) { s.spinning = false; s.spinT = 0; plane.rotation.y = 0 }
+      } else {
+        plane.rotation.y = Math.sin(s.t * 0.5) * 0.1
+        plane.rotation.x = Math.sin(s.t * 0.3 + 1) * 0.035
+      }
+      renderer.render(scene, camera)
+    }
+    tick()
+
+    return () => {
+      cancelAnimationFrame(s.frameId)
+      geo.dispose(); mat.dispose(); texture.dispose(); renderer.dispose()
+      if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!triggerCount || !stateRef.current) return
+    stateRef.current.spinning = true
+    stateRef.current.spinT = 0
+  }, [triggerCount])
+
+  return (
+    <div
+      ref={divRef}
+      onClick={onClick}
+      style={{ width: 200, height: 36, cursor: "pointer", display: "inline-flex", alignItems: "center", flexShrink: 0 }}
+    />
   )
 }
 
@@ -139,6 +231,8 @@ function Nav({ onLogoClick, activeSection }: { onLogoClick?: () => void; activeS
   const { sm, md: isMobile } = useBreakpoint()
   const [scrolled, setScrolled] = useState(false)
   const [pill, setPill] = useState<{ left: number; width: number; height: number; top: number } | null>(null)
+  const [logoTick, setLogoTick] = useState(0)
+  const prevSectionRef = useRef(activeSection)
   const containerRef = useRef<HTMLDivElement>(null)
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
 
@@ -147,6 +241,13 @@ function Nav({ onLogoClick, activeSection }: { onLogoClick?: () => void; activeS
     window.addEventListener("scroll", fn)
     return () => window.removeEventListener("scroll", fn)
   }, [])
+
+  useEffect(() => {
+    if (activeSection === 0 && prevSectionRef.current !== 0) {
+      setLogoTick(n => n + 1)
+    }
+    prevSectionRef.current = activeSection
+  }, [activeSection])
 
   // index aligns with SNAP_SECTIONS: hero=0, mission=1, projects=2, skills=3, contact=4
   const links = [
@@ -250,22 +351,7 @@ function Nav({ onLogoClick, activeSection }: { onLogoClick?: () => void; activeS
         transition: "box-shadow 0.3s",
       }}
     >
-      <button
-        onClick={onLogoClick}
-        className="font-display"
-        style={{
-          fontWeight: 600,
-          fontSize: 18,
-          letterSpacing: "-0.02em",
-          background: "none",
-          border: "none",
-          padding: 0,
-          cursor: "pointer",
-          color: "inherit",
-        }}
-      >
-        Learning Designer
-      </button>
+      <LogoCanvas triggerCount={logoTick} onClick={onLogoClick} />
 
       <div ref={containerRef} style={{ display: "flex", alignItems: "center", gap: 4, position: "relative" }}>
         {/* sliding pill */}
