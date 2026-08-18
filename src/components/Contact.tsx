@@ -1,0 +1,161 @@
+import { Fragment } from "react"
+import { useBreakpoint } from "../hooks/useBreakpoint"
+import Eyebrow from "./Eyebrow"
+import SectionHeading from "./SectionHeading"
+
+export default function Contact() {
+  const { sm, md: isMobile, lg: isTablet } = useBreakpoint()
+
+  const socials = [
+    { label: "GitHub", handle: import.meta.env.VITE_GITHUB_HANDLE, href: import.meta.env.VITE_GITHUB_URL },
+    { label: "LinkedIn", handle: import.meta.env.VITE_LINKEDIN_HANDLE, href: import.meta.env.VITE_LINKEDIN_URL },
+  ]
+
+  const actions = [
+    {
+      label: "Email Me",
+      description: import.meta.env.VITE_EMAIL,
+      href: `mailto:${import.meta.env.VITE_EMAIL}`,
+      icon: "✉",
+    },
+    {
+      label: "WhatsApp Chat",
+      description: import.meta.env.VITE_WHATSAPP_NUMBER,
+      href: import.meta.env.VITE_WHATSAPP_URL,
+      icon: "◎",
+    },
+    {
+      label: "Download Resume",
+      description: "PDF · Updated Aug 2026",
+      href: import.meta.env.VITE_RESUME_PATH,
+      icon: "↓",
+      download: true,
+    },
+  ]
+
+  const inkLine = (
+    <svg width="100%" height="10" viewBox="0 0 400 10" preserveAspectRatio="none" style={{ display: "block", overflow: "visible" }}>
+      <path
+        d="M0,5 C25,3.2 55,7 95,4.8 C135,2.6 165,7.4 210,5.2 C255,3 285,7.6 325,4.6 C358,2.2 382,6.2 400,5"
+        stroke="rgba(17,17,16,0.22)"
+        strokeWidth="1.3"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+
+  return (
+    <section
+      id="contact"
+      style={{
+        minHeight: "clamp(620px, 78vh, 820px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        overflow: "hidden",
+      }}
+    >
+      {/* Main content */}
+      <div style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        width: "100%",
+        padding: sm ? "52px 20px 20px" : isMobile ? "72px 32px 20px" : "clamp(28px, 3.8vw, 56px) clamp(28px, 4vw, 64px) 12px",
+      }}>
+        <Eyebrow>Let's talk</Eyebrow>
+        <SectionHeading style={{ margin: sm ? "0 0 28px" : "0 0 30px", fontSize: "clamp(3rem, 4vw, 5.2rem)" }}>Get in touch</SectionHeading>
+
+        <div
+          className="contact-grid"
+          style={{
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+            gap: isMobile ? 36 : isTablet ? 48 : 80,
+            alignItems: "start",
+          }}
+        >
+          {/* Left — intro + social links */}
+          <div>
+            <p style={{ fontSize: sm ? 14 : "clamp(14px, 1.25vw, 16px)", lineHeight: 1.8, color: "#6b6b68", marginBottom: sm ? 24 : 28, maxWidth: 360 }}>
+              Currently open to ML Engineering roles in EdTech and Computer Vision.
+              If you're building something in that space, I'd love to hear about it.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {socials.map((s, i) => (
+                <Fragment key={s.label}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      textDecoration: "none",
+                      padding: sm ? "16px 0" : "20px 0",
+                      transition: "opacity 0.18s",
+                      color: "inherit",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.5")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
+                  >
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6b6b68", marginBottom: 2 }}>
+                        {s.label}
+                      </div>
+                      <div style={{ fontSize: sm ? 13 : 15 }}>{s.handle}</div>
+                    </div>
+                    <span style={{ fontSize: 13, opacity: 0.45 }}>↗</span>
+                  </a>
+                  {inkLine}
+                </Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — action cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {actions.map((a) => (
+              <a
+                key={a.label}
+                href={a.href}
+                {...(a.download ? { download: true } : { target: "_blank", rel: "noopener noreferrer" })}
+                className="action-card"
+                style={{ padding: sm ? "20px 20px" : "clamp(18px, 1.8vw, 28px) clamp(20px, 2vw, 28px)" }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                  <span style={{ fontSize: 22, flexShrink: 0, lineHeight: 1, opacity: 0.35 }}>
+                    {a.icon}
+                  </span>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 2 }}>{a.label}</div>
+                    <div style={{ fontSize: 13, color: "#6b6b68" }}>{a.description}</div>
+                  </div>
+                </div>
+                <span style={{ fontSize: 14, opacity: 0.35, flexShrink: 0 }}>↗</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer — ink line full-width, text near edges */}
+      <div>
+        {inkLine}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 12,
+          padding: sm ? "12px 20px 18px" : "12px 32px 18px",
+        }}>
+          <span className="font-display" style={{ fontSize: 15, fontWeight: 600 }}>Portfolio</span>
+          <span style={{ fontSize: 12, color: "#6b6b68" }}>© 2026 — ML Engineer</span>
+        </div>
+      </div>
+    </section>
+  )
+}
