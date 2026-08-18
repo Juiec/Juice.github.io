@@ -2,6 +2,7 @@ import {
   useState,
   useEffect,
   useRef,
+  Fragment,
   type CSSProperties,
   type PointerEvent,
 } from "react"
@@ -112,14 +113,14 @@ function WireframeCube() {
   ]
 
   return (
-    <div className="wireframe-scene" style={{ width: 320, height: 320, position: "relative" }}>
+    <div className="wireframe-scene" style={{ width: 384, height: 384, position: "relative" }}>
       {stars.map(({ delay, ...pos }, i) => (
         <span key={i} className="star" style={{ ...(pos as CSSProperties), animationDelay: delay }}>
           ✦
         </span>
       ))}
-      <div className="wireframe-orbit" style={{ width: 520, height: 190, animation: "orbit-a 8s linear infinite" }} />
-      <div className="wireframe-orbit" style={{ width: 440, height: 160, animation: "orbit-b 14s linear infinite", opacity: 0.5 }} />
+      <div className="wireframe-orbit" style={{ width: 624, height: 228, animation: "orbit-a 8s linear infinite" }} />
+      <div className="wireframe-orbit" style={{ width: 528, height: 192, animation: "orbit-b 14s linear infinite", opacity: 0.5 }} />
       <div className="wireframe-cube" style={{ marginTop: 20 }}>
         {faces.map((f) => (
           <div key={f} className={`wireframe-face face-${f}`}>
@@ -137,6 +138,9 @@ function WireframeCube() {
 function Nav({ onLogoClick, activeSection }: { onLogoClick?: () => void; activeSection?: number }) {
   const { sm, md: isMobile } = useBreakpoint()
   const [scrolled, setScrolled] = useState(false)
+  const [pill, setPill] = useState<{ left: number; width: number; height: number; top: number } | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20)
@@ -151,6 +155,17 @@ function Nav({ onLogoClick, activeSection }: { onLogoClick?: () => void; activeS
     { label: "Skills",   href: "#skills",   icon: "△", sectionIdx: 3 },
     { label: "Contact",  href: "#contact",  icon: "✦", sectionIdx: 4 },
   ]
+
+  useEffect(() => {
+    const activeIdx = links.findIndex(l => l.sectionIdx === activeSection)
+    if (activeIdx === -1) { setPill(null); return }
+    const el = linkRefs.current[activeIdx]
+    const container = containerRef.current
+    if (!el || !container) return
+    const er = el.getBoundingClientRect()
+    const cr = container.getBoundingClientRect()
+    setPill({ left: er.left - cr.left, width: er.width, height: er.height, top: er.top - cr.top })
+  }, [activeSection])
 
   if (isMobile) {
     return (
@@ -251,38 +266,52 @@ function Nav({ onLogoClick, activeSection }: { onLogoClick?: () => void; activeS
       >
         Learning Designer
       </button>
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        {links.map((link) => {
+
+      <div ref={containerRef} style={{ display: "flex", alignItems: "center", gap: 4, position: "relative" }}>
+        {/* sliding pill */}
+        {pill && (
+          <div
+            style={{
+              position: "absolute",
+              top: pill.top,
+              left: pill.left,
+              width: pill.width,
+              height: pill.height,
+              background: "#111110",
+              borderRadius: 8,
+              transition: "left 0.38s cubic-bezier(0.34,1.56,0.64,1), width 0.38s cubic-bezier(0.34,1.56,0.64,1)",
+              zIndex: 0,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+        {links.map((link, idx) => {
           const isActive = activeSection === link.sectionIdx
           return (
-          <a
-            key={link.label}
-            href={link.href}
-            style={{
-              color: isActive ? "#f8f8f6" : "#6b6b68",
-              textDecoration: "none",
-              padding: "6px 14px",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 500,
-              background: isActive ? "#111110" : "transparent",
-              transition: "color 0.2s, background 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive) {
-                ;(e.currentTarget as HTMLElement).style.color = "#111110"
-                ;(e.currentTarget as HTMLElement).style.background = "rgba(17,17,16,0.05)"
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive) {
-                ;(e.currentTarget as HTMLElement).style.color = "#6b6b68"
-                ;(e.currentTarget as HTMLElement).style.background = "transparent"
-              }
-            }}
-          >
-            {link.label}
-          </a>
+            <a
+              key={link.label}
+              ref={el => { linkRefs.current[idx] = el }}
+              href={link.href}
+              style={{
+                color: isActive ? "#f8f8f6" : "#6b6b68",
+                textDecoration: "none",
+                padding: "6px 14px",
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 500,
+                position: "relative",
+                zIndex: 1,
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) (e.currentTarget as HTMLElement).style.color = "#111110"
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) (e.currentTarget as HTMLElement).style.color = "#6b6b68"
+              }}
+            >
+              {link.label}
+            </a>
           )
         })}
       </div>
@@ -441,7 +470,11 @@ function Mission() {
     <section
       id="mission"
       style={{
-        padding: sm ? "64px 20px 80px" : isMobile ? "80px 32px 100px" : "100px 64px 120px",
+        minHeight: "100svh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: sm ? "96px 20px 80px" : isMobile ? "100px 32px 100px" : "128px 64px 120px",
         maxWidth: 1200,
         margin: "0 auto",
       }}
@@ -550,17 +583,18 @@ function Mission() {
             style={{
               display: "grid",
               gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)",
-              gap: 1,
+              gap: isMobile ? 0 : 1,
               border: "1px solid rgba(17,17,16,0.10)",
               animation: "tab-in 0.22s ease",
             }}
           >
-            {focus.map((f) => (
+            {focus.map((f, idx) => (
               <div
                 key={f.area}
                 style={{
                   padding: sm ? "24px 20px" : "32px 28px",
-                  borderRight: "1px solid rgba(17,17,16,0.10)",
+                  borderRight: isMobile ? "none" : idx < focus.length - 1 ? "1px solid rgba(17,17,16,0.10)" : "none",
+                  borderBottom: isMobile && idx < focus.length - 1 ? "1px solid rgba(17,17,16,0.10)" : "none",
                   display: "flex",
                   flexDirection: "column",
                   gap: 14,
@@ -682,7 +716,7 @@ function Projects() {
   ]
 
   const cols = isMobile ? "1fr" : isTablet ? "repeat(2,1fr)" : "repeat(3,1fr)"
-  const collapsedHeight = isMobile ? 760 : isTablet ? 500 : 380
+  const collapsedHeight = sm ? 640 : isMobile ? 760 : isTablet ? 500 : 380
 
   return (
     <section
@@ -781,7 +815,7 @@ function Projects() {
 
                 <h3
                   className="font-display"
-                  style={{ fontSize: 22, fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 12px" }}
+                  style={{ fontSize: sm ? 18 : 22, fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 12px" }}
                 >
                   {p.title}
                 </h3>
@@ -842,7 +876,7 @@ function SkillMarquee() {
 }
 
 function Skills() {
-  const isMobile = useMobile()
+  const { sm, md: isMobile } = useBreakpoint()
   return (
     <section
       id="skills"
@@ -852,14 +886,14 @@ function Skills() {
         flexDirection: "column",
         justifyContent: "center",
         minHeight: "100svh",
-        padding: isMobile ? "48px 0 56px" : "64px 0",
+        padding: sm ? "36px 0 48px" : isMobile ? "48px 0 56px" : "64px 0",
       }}
     >
       <div
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: isMobile ? "0 24px" : "0 64px",
+          padding: sm ? "0 20px" : isMobile ? "0 24px" : "0 64px",
           marginBottom: isMobile ? 32 : 36,
           width: "100%",
         }}
@@ -874,157 +908,158 @@ function Skills() {
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
 function Contact() {
-  const { sm, md: isMobile } = useBreakpoint()
+  const { sm, md: isMobile, lg: isTablet } = useBreakpoint()
 
   const socials = [
-    { label: "GitHub",   handle: "github.com/you",     href: "https://github.com/you" },
-    { label: "LinkedIn", handle: "linkedin.com/in/you", href: "https://linkedin.com/in/you" },
+    { label: "GitHub",   handle: import.meta.env.VITE_GITHUB_HANDLE,   href: import.meta.env.VITE_GITHUB_URL },
+    { label: "LinkedIn", handle: import.meta.env.VITE_LINKEDIN_HANDLE, href: import.meta.env.VITE_LINKEDIN_URL },
   ]
 
   const actions = [
     {
       label: "Email Me",
-      description: "hello@yourname.dev",
-      href: "mailto:hello@yourname.dev",
+      description: import.meta.env.VITE_EMAIL,
+      href: `mailto:${import.meta.env.VITE_EMAIL}`,
       icon: "✉",
     },
     {
       label: "WhatsApp Chat",
-      description: "+1 (555) 000-0000",
-      href: "https://wa.me/15550000000",
+      description: import.meta.env.VITE_WHATSAPP_NUMBER,
+      href: import.meta.env.VITE_WHATSAPP_URL,
       icon: "◎",
     },
     {
       label: "Download Resume",
       description: "PDF · Updated Aug 2026",
-      href: "/resume.pdf",
+      href: import.meta.env.VITE_RESUME_PATH,
       icon: "↓",
       download: true,
     },
   ]
 
+  const inkLine = (
+    <svg width="100%" height="10" viewBox="0 0 400 10" preserveAspectRatio="none" style={{ display: "block", overflow: "visible" }}>
+      <path
+        d="M0,5 C25,3.2 55,7 95,4.8 C135,2.6 165,7.4 210,5.2 C255,3 285,7.6 325,4.6 C358,2.2 382,6.2 400,5"
+        stroke="rgba(17,17,16,0.22)"
+        strokeWidth="1.3"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+
   return (
     <section
       id="contact"
       style={{
-        padding: sm ? "60px 20px 100px" : isMobile ? "80px 32px 100px" : "100px 64px 140px",
-        maxWidth: 1200,
-        margin: "0 auto",
+        minHeight: "100svh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <Eyebrow>Let's talk</Eyebrow>
-      <SectionHeading style={{ margin: sm ? "0 0 36px" : "0 0 56px" }}>Get in touch</SectionHeading>
+      {/* Main content */}
+      <div style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        width: "100%",
+        padding: sm ? "60px 20px 48px" : isMobile ? "80px 32px 48px" : "100px 64px 56px",
+      }}>
+        <Eyebrow>Let's talk</Eyebrow>
+        <SectionHeading style={{ margin: sm ? "0 0 36px" : "0 0 56px" }}>Get in touch</SectionHeading>
 
-      <div
-        className="contact-grid"
-        style={{
-          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-          gap: isMobile ? 36 : 80,
-          alignItems: "start",
-        }}
-      >
-        {/* Left — intro + social links */}
-        <div>
-          <p style={{ fontSize: sm ? 14 : 16, lineHeight: 1.8, color: "#6b6b68", marginBottom: sm ? 28 : 40, maxWidth: 360 }}>
-            Currently open to ML Engineering roles in EdTech and Computer Vision.
-            If you're building something in that space, I'd love to hear about it.
-          </p>
+        <div
+          className="contact-grid"
+          style={{
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+            gap: isMobile ? 36 : isTablet ? 48 : 80,
+            alignItems: "start",
+          }}
+        >
+          {/* Left — intro + social links */}
+          <div>
+            <p style={{ fontSize: sm ? 14 : 16, lineHeight: 1.8, color: "#6b6b68", marginBottom: sm ? 28 : 40, maxWidth: 360 }}>
+              Currently open to ML Engineering roles in EdTech and Computer Vision.
+              If you're building something in that space, I'd love to hear about it.
+            </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {socials.map((s) => (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {socials.map((s, i) => (
+                <Fragment key={s.label}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      textDecoration: "none",
+                      padding: sm ? "16px 0" : "20px 0",
+                      transition: "opacity 0.18s",
+                      color: "inherit",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.5")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
+                  >
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6b6b68", marginBottom: 2 }}>
+                        {s.label}
+                      </div>
+                      <div style={{ fontSize: sm ? 13 : 15 }}>{s.handle}</div>
+                    </div>
+                    <span style={{ fontSize: 13, opacity: 0.45 }}>↗</span>
+                  </a>
+                  {inkLine}
+                </Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — action cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {actions.map((a) => (
               <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  textDecoration: "none",
-                  padding: sm ? "16px 0" : "20px 0",
-                  borderBottom: "1px solid rgba(17,17,16,0.10)",
-                  transition: "opacity 0.18s",
-                  color: "inherit",
-                }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.5")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
+                key={a.label}
+                href={a.href}
+                {...(a.download ? { download: true } : { target: "_blank", rel: "noopener noreferrer" })}
+                className="action-card"
+                style={{ padding: sm ? "20px 20px" : "28px 24px" }}
               >
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6b6b68", marginBottom: 2 }}>
-                    {s.label}
+                <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                  <span style={{ fontSize: 22, flexShrink: 0, lineHeight: 1, opacity: 0.35 }}>
+                    {a.icon}
+                  </span>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 2 }}>{a.label}</div>
+                    <div style={{ fontSize: 13, color: "#6b6b68" }}>{a.description}</div>
                   </div>
-                  <div style={{ fontSize: sm ? 13 : 15 }}>{s.handle}</div>
                 </div>
-                <span style={{ fontSize: 13, opacity: 0.45 }}>↗</span>
+                <span style={{ fontSize: 14, opacity: 0.35, flexShrink: 0 }}>↗</span>
               </a>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Right — action cards */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {actions.map((a, i) => (
-            <a
-              key={a.label}
-              href={a.href}
-              {...(a.download ? { download: true } : { target: "_blank", rel: "noopener noreferrer" })}
-              className="action-card"
-              style={{
-                borderTop: i === 0 ? "1px solid rgba(17,17,16,0.12)" : "none",
-                borderBottom: "1px solid rgba(17,17,16,0.12)",
-                borderLeft: "1px solid rgba(17,17,16,0.12)",
-                borderRight: "1px solid rgba(17,17,16,0.12)",
-                marginTop: i > 0 ? -1 : 0,
-                padding: sm ? "18px 16px" : undefined,
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-                <span style={{
-                  width: 40,
-                  height: 40,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid rgba(17,17,16,0.12)",
-                  fontSize: 18,
-                  flexShrink: 0,
-                  lineHeight: 1,
-                }}>
-                  {a.icon}
-                </span>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 2 }}>{a.label}</div>
-                  <div style={{ fontSize: 13, color: "#6b6b68" }}>{a.description}</div>
-                </div>
-              </div>
-              <span style={{ fontSize: 14, opacity: 0.35, flexShrink: 0 }}>↗</span>
-            </a>
-          ))}
+      {/* Footer — ink line full-width, text near edges */}
+      <div>
+        {inkLine}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 12,
+          padding: sm ? "14px 20px 20px" : "16px 32px 24px",
+        }}>
+          <span className="font-display" style={{ fontSize: 15, fontWeight: 600 }}>Portfolio</span>
+          <span style={{ fontSize: 12, color: "#6b6b68" }}>© 2026 — ML Engineer</span>
         </div>
       </div>
     </section>
-  )
-}
-
-// ─── Footer ───────────────────────────────────────────────────────────────────
-function Footer() {
-  const isMobile = useMobile()
-  return (
-    <footer
-      style={{
-        borderTop: "1px solid rgba(17,17,16,0.08)",
-        padding: isMobile ? "24px 24px" : "24px 64px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: 16,
-      }}
-    >
-      <span className="font-display" style={{ fontSize: 16, fontWeight: 600 }}>Portfolio</span>
-      <span style={{ fontSize: 13, color: "#6b6b68" }}>© 2026 — ML Engineer</span>
-    </footer>
   )
 }
 
@@ -1176,11 +1211,9 @@ function useScrollSnap(onSection: (i: number) => void): (idx: number) => void {
       if (busy) return
       if (idx < 0 || idx >= SNAP_SECTIONS.length) return
       busy = true
+      cbRef.current(idx) // update nav immediately so pill slides before spring settles
       playSnap()
-      springTo(tops()[idx], () => {
-        busy = false
-        cbRef.current(idx) // update nav only after spring settles
-      })
+      springTo(tops()[idx], () => { busy = false })
     }
 
     goToRef.current = goTo
@@ -1298,7 +1331,7 @@ export default function App() {
           return el ? Math.abs(el.getBoundingClientRect().top) : Infinity
         })
         setActiveSection(distances.indexOf(Math.min(...distances)))
-      }, 180)
+      }, 60)
     }
     window.addEventListener("scroll", update, { passive: true })
     return () => {
@@ -1319,7 +1352,6 @@ export default function App() {
         <Projects />
         <Skills />
         <Contact />
-        <Footer />
       </div>
     </div>
   )

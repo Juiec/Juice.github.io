@@ -120,13 +120,16 @@ body {
   padding: 24px 28px;
   text-decoration: none;
   color: inherit;
-  background: transparent;
-  transition: background 0.18s;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(17,17,16,0.04);
+  transition: transform 0.18s, box-shadow 0.18s;
   cursor: pointer;
 }
 
 .action-card:hover {
-  background: rgba(17,17,16,0.03);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17,17,16,0.08);
 }
 
 .stats-grid {
@@ -163,12 +166,15 @@ body {
   border-radius: 10px;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: inline-block;
   text-align: center;
 }
 
-.btn-primary:hover { background: #2a2a28; }
+.btn-primary:hover {
+  background: #2a2a28;
+  transform: rotate(-4deg) scale(1.05);
+}
 
 .btn-outline {
   background: transparent;
@@ -180,12 +186,15 @@ body {
   border-radius: 10px;
   text-decoration: none;
   border: 1.5px solid rgba(17,17,16,0.2);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: inline-block;
   text-align: center;
 }
 
-.btn-outline:hover { border-color: rgba(17,17,16,0.6); }
+.btn-outline:hover {
+  border-color: rgba(17,17,16,0.6);
+  transform: rotate(4deg) scale(1.05);
+}
 
 /* ─── Form ──────────────────────────────────────────────────────────────────── */
 
@@ -235,27 +244,27 @@ body {
 }
 
 .wireframe-cube {
-  width: 160px;
-  height: 160px;
+  width: 192px;
+  height: 192px;
   position: relative;
   transform-style: preserve-3d;
-  animation: rotate-wireframe 12s linear infinite;
+  animation: rotate-wireframe 11.4s linear infinite;
 }
 
 .wireframe-face {
   position: absolute;
-  width: 160px;
-  height: 160px;
+  width: 192px;
+  height: 192px;
   border: 1.5px solid rgba(17,17,16,0.3);
   background: transparent;
 }
 
-.face-front  { transform: translateZ(80px); }
-.face-back   { transform: translateZ(-80px) rotateY(180deg); }
-.face-left   { transform: rotateY(-90deg) translateZ(80px); }
-.face-right  { transform: rotateY(90deg) translateZ(80px); }
-.face-top    { transform: rotateX(90deg) translateZ(80px); }
-.face-bottom { transform: rotateX(-90deg) translateZ(80px); }
+.face-front  { transform: translateZ(96px); }
+.face-back   { transform: translateZ(-96px) rotateY(180deg); }
+.face-left   { transform: rotateY(-90deg) translateZ(96px); }
+.face-right  { transform: rotateY(90deg) translateZ(96px); }
+.face-top    { transform: rotateX(90deg) translateZ(96px); }
+.face-bottom { transform: rotateX(-90deg) translateZ(96px); }
 
 .face-inner {
   width: 100%;
@@ -279,7 +288,7 @@ body {
 
 .star {
   position: absolute;
-  font-size: 12px;
+  font-size: 14px;
   color: #111110;
   animation: float-star 3s ease-in-out infinite;
 }
@@ -376,11 +385,6 @@ body {
   }
 }
 
-/* tablet */
-@media (max-width: 1024px) {
-  .projects-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
 /* phone landscape / small tablet */
 @media (max-width: 768px) {
   .section-container { padding: 80px 32px; }
@@ -408,16 +412,16 @@ body {
 @media (max-width: 480px) {
   .wireframe-cube,
   .wireframe-face {
-    width: 120px;
-    height: 120px;
+    width: 144px;
+    height: 144px;
   }
 
-  .face-front  { transform: translateZ(60px); }
-  .face-back   { transform: translateZ(-60px) rotateY(180deg); }
-  .face-left   { transform: rotateY(-90deg) translateZ(60px); }
-  .face-right  { transform: rotateY(90deg) translateZ(60px); }
-  .face-top    { transform: rotateX(90deg) translateZ(60px); }
-  .face-bottom { transform: rotateX(-90deg) translateZ(60px); }
+  .face-front  { transform: translateZ(72px); }
+  .face-back   { transform: translateZ(-72px) rotateY(180deg); }
+  .face-left   { transform: rotateY(-90deg) translateZ(72px); }
+  .face-right  { transform: rotateY(90deg) translateZ(72px); }
+  .face-top    { transform: rotateX(90deg) translateZ(72px); }
+  .face-bottom { transform: rotateX(-90deg) translateZ(72px); }
 
   .skill-word { font-size: clamp(28px, 11svh, 80px); line-height: 1.08; }
 
