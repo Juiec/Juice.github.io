@@ -1040,7 +1040,7 @@ function Contact() {
     <section
       id="contact"
       style={{
-        minHeight: "100svh",
+        minHeight: "clamp(620px, 82vh, 860px)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -1052,10 +1052,10 @@ function Contact() {
         maxWidth: 1200,
         margin: "0 auto",
         width: "100%",
-        padding: sm ? "52px 20px 20px" : isMobile ? "72px 32px 20px" : "clamp(52px, 5vw, 88px) clamp(28px, 4vw, 64px) 20px",
+        padding: sm ? "52px 20px 20px" : isMobile ? "72px 32px 20px" : "clamp(28px, 3.8vw, 56px) clamp(28px, 4vw, 64px) 12px",
       }}>
         <Eyebrow>Let's talk</Eyebrow>
-        <SectionHeading style={{ margin: sm ? "0 0 28px" : "0 0 32px", fontSize: "clamp(2.8rem, 5vw, 6rem)" }}>Get in touch</SectionHeading>
+        <SectionHeading style={{ margin: sm ? "0 0 28px" : "0 0 30px", fontSize: "clamp(3rem, 4vw, 5.2rem)" }}>Get in touch</SectionHeading>
 
         <div
           className="contact-grid"
@@ -1113,7 +1113,7 @@ function Contact() {
                 href={a.href}
                 {...(a.download ? { download: true } : { target: "_blank", rel: "noopener noreferrer" })}
                 className="action-card"
-                style={{ padding: sm ? "20px 20px" : "28px 24px" }}
+                style={{ padding: sm ? "20px 20px" : "clamp(18px, 1.8vw, 28px) clamp(20px, 2vw, 28px)" }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
                   <span style={{ fontSize: 22, flexShrink: 0, lineHeight: 1, opacity: 0.35 }}>
