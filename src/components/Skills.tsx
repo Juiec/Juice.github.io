@@ -28,7 +28,7 @@ function SkillMarquee() {
 }
 
 export default function Skills() {
-  const { sm, md: isMobile } = useBreakpoint()
+  const { sm, md: isMobile, short: isShort } = useBreakpoint()
   return (
     <section
       id="skills"

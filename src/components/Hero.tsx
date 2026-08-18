@@ -2,14 +2,14 @@ import { useBreakpoint } from "../hooks/useBreakpoint"
 import Eyebrow from "./Eyebrow"
 
 export default function Hero() {
-  const { sm, md: isMobile } = useBreakpoint()
+  const { sm, md: isMobile, short: isShort } = useBreakpoint()
   return (
     <section
       id="hero"
       style={{
         minHeight: "100svh",
         display: "grid",
-        gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+        gridTemplateColumns: isMobile ? "1fr" : isShort ? "55% 45%": "1fr 1fr",
         alignItems: "center",
         padding: sm ? "72px 20px 100px" : isMobile ? "90px 28px 100px" : "100px 64px 64px",
         maxWidth: 1200,
