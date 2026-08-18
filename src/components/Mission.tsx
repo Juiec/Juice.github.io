@@ -85,7 +85,7 @@ export default function Mission() {
       }}>
 
         {/* ── Left: heading + intro ── */}
-        <div style={{ position: isMobile ? "static" : "sticky", top: 100, paddingBottom: isMobile ? 4 : 0 }}>
+        <div style={{ position: isMobile ? "static" : "sticky", top: "50%", paddingBottom: isMobile ? 4 : 0 }}>
           <Eyebrow>About me</Eyebrow>
           <SectionHeading style={{ lineHeight: 1.1, margin: "0 0 20px", fontSize: "clamp(2.3rem, 3vw, 4rem)" }}>
             Building at the <em>intersection</em>
