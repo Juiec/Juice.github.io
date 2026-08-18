@@ -52,7 +52,7 @@ export default function Projects() {
     <section
       id="projects"
       style={{
-        padding: sm ? "60px 20px" : isMobile ? "80px 32px" : "clamp(64px, 6vw, 100px) clamp(28px, 5vw, 64px)",
+        padding: sm ? "72px 20px 100px" : isMobile ? "90px 28px 100px" : "100px 64px 64px",
         maxWidth: 1200,
         margin: "0 auto",
       }}

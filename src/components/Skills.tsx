@@ -38,14 +38,13 @@ export default function Skills() {
         flexDirection: "column",
         justifyContent: "center",
         minHeight: isMobile ? "auto" : "clamp(760px, 92vh, 980px)",
-        padding: sm ? "36px 0 48px" : isMobile ? "48px 0 56px" : "clamp(18px, 2.6vw, 30px) 0 clamp(18px, 2.5vw, 32px)",
+        padding: sm ? "72px 20px 100px" : isMobile ? "90px 28px 100px" : "100px 64px 64px",
       }}
     >
       <div
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: sm ? "0 20px" : isMobile ? "0 24px" : "0 64px",
           marginBottom: isMobile ? 32 : 36,
           width: "100%",
         }}

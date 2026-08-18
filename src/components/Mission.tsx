@@ -72,7 +72,7 @@ export default function Mission() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: sm ? "96px 20px 80px" : isMobile ? "100px 32px 100px" : "clamp(72px, 7vw, 120px) clamp(28px, 5vw, 64px)",
+        padding: sm ? "72px 20px 100px" : isMobile ? "90px 28px 100px" : "100px 64px 64px",
         maxWidth: 1200,
         margin: "0 auto",
       }}

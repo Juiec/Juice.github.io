@@ -62,7 +62,7 @@ export default function Contact() {
         maxWidth: 1200,
         margin: "0 auto",
         width: "100%",
-        padding: sm ? "52px 20px 20px" : isMobile ? "72px 32px 20px" : "clamp(28px, 3.8vw, 56px) clamp(28px, 4vw, 64px) 12px",
+        padding: sm ? "72px 20px 100px" : isMobile ? "90px 28px 100px" : "100px 64px 64px",
       }}>
         <Eyebrow>Let's talk</Eyebrow>
         <SectionHeading style={{ margin: sm ? "0 0 28px" : "0 0 30px", fontSize: "clamp(3rem, 4vw, 5.2rem)" }}>Get in touch</SectionHeading>
