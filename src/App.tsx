@@ -458,7 +458,7 @@ function Hero() {
         </h1>
         <p
           style={{
-            fontSize: sm ? 15 : 17,
+            fontSize: "clamp(15px, 1.2vw, 17px)",
             lineHeight: 1.7,
             color: "#6b6b68",
             maxWidth: isMobile ? "100%" : 380,
@@ -556,11 +556,11 @@ function Mission() {
     <section
       id="mission"
       style={{
-        minHeight: "100svh",
+        minHeight: isMobile ? "auto" : "clamp(520px, 72vh, 760px)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: sm ? "96px 20px 80px" : isMobile ? "100px 32px 100px" : "128px 64px 120px",
+        padding: sm ? "96px 20px 80px" : isMobile ? "100px 32px 100px" : "clamp(72px, 7vw, 120px) clamp(28px, 5vw, 64px)",
         maxWidth: 1200,
         margin: "0 auto",
       }}
@@ -575,11 +575,11 @@ function Mission() {
         {/* ── Left: heading + intro ── */}
         <div style={{ position: isMobile ? "static" : "sticky", top: 100, paddingBottom: isMobile ? 4 : 0 }}>
           <Eyebrow>About me</Eyebrow>
-          <SectionHeading style={{ lineHeight: 1.1, margin: "0 0 20px" }}>
+          <SectionHeading style={{ lineHeight: 1.1, margin: "0 0 20px", fontSize: "clamp(2.3rem, 3vw, 4rem)" }}>
             Building at the <em>intersection</em>
             {" "}of AI and Education.
           </SectionHeading>
-          <p style={{ fontSize: sm ? 15 : 16, lineHeight: 1.8, color: "#6b6b68", margin: 0 }}>
+          <p style={{ fontSize: "clamp(15px, 1.2vw, 16px)", lineHeight: 1.8, color: "#6b6b68", margin: 0 }}>
             The challenge isn't whether people use AI — it's helping them use it responsibly,
             transparently, and effectively. I build deployable systems that sit at that boundary.
           </p>
@@ -643,11 +643,11 @@ function Mission() {
                   </div>
                 </div>
                 <div>
-                  <div className="font-display" style={{ fontSize: sm ? 20 : 24, fontWeight: 400, letterSpacing: "-0.01em", marginBottom: 4 }}>
+                  <div className="font-display" style={{ fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)", fontWeight: 400, letterSpacing: "-0.01em", marginBottom: 4 }}>
                     {e.degree}
                   </div>
-                  <div style={{ fontSize: 14, color: "#6b6b68", marginBottom: 14 }}>{e.institution}</div>
-                  <p style={{ fontSize: sm ? 14 : 15, lineHeight: 1.75, color: "#6b6b68", margin: "0 0 16px", maxWidth: 560 }}>
+                  <div style={{ fontSize: "clamp(0.8rem, 0.9vw, 0.875rem)", color: "#6b6b68", marginBottom: 14 }}>{e.institution}</div>
+                  <p style={{ fontSize: "clamp(0.875rem, 1vw, 0.9375rem)", lineHeight: 1.75, color: "#6b6b68", margin: "0 0 16px", maxWidth: 560 }}>
                     {e.detail}
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -687,10 +687,10 @@ function Mission() {
                 }}
               >
                 <span style={{ fontSize: 22, lineHeight: 1 }}>{f.icon}</span>
-                <div className="font-display" style={{ fontSize: sm ? 17 : 19, fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
+                <div className="font-display" style={{ fontSize: "clamp(1.1rem, 1.6vw, 1.2rem)", fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
                   {f.area}
                 </div>
-                <p style={{ fontSize: sm ? 13 : 14, lineHeight: 1.75, color: "#6b6b68", margin: 0, flexGrow: 1 }}>
+                <p style={{ fontSize: "clamp(0.8125rem, 0.95vw, 0.875rem)", lineHeight: 1.75, color: "#6b6b68", margin: 0, flexGrow: 1 }}>
                   {f.desc}
                 </p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
@@ -739,11 +739,11 @@ function Mission() {
                   </span>
                 </div>
                 <div>
-                  <div className="font-display" style={{ fontSize: sm ? 18 : 22, fontWeight: 400, letterSpacing: "-0.01em", marginBottom: 3 }}>
+                  <div className="font-display" style={{ fontSize: "clamp(1.1rem, 1.7vw, 1.4rem)", fontWeight: 400, letterSpacing: "-0.01em", marginBottom: 3 }}>
                     {ex.role}
                   </div>
-                  <div style={{ fontSize: 14, color: "#6b6b68", marginBottom: 10 }}>{ex.org}</div>
-                  <p style={{ fontSize: sm ? 13 : 14, lineHeight: 1.75, color: "#6b6b68", margin: 0, maxWidth: 560 }}>
+                  <div style={{ fontSize: "clamp(0.8rem, 0.9vw, 0.875rem)", color: "#6b6b68", marginBottom: 10 }}>{ex.org}</div>
+                  <p style={{ fontSize: "clamp(0.8125rem, 0.95vw, 0.875rem)", lineHeight: 1.75, color: "#6b6b68", margin: 0, maxWidth: 560 }}>
                     {ex.desc}
                   </p>
                 </div>
@@ -802,13 +802,13 @@ function Projects() {
   ]
 
   const cols = isMobile ? "1fr" : isTablet ? "repeat(2,1fr)" : "repeat(3,1fr)"
-  const collapsedHeight = sm ? 640 : isMobile ? 760 : isTablet ? 500 : 380
+  const collapsedHeight = sm ? 640 : isMobile ? 760 : isTablet ? 520 : 420
 
   return (
     <section
       id="projects"
       style={{
-        padding: sm ? "60px 20px" : isMobile ? "80px 32px" : "100px 64px",
+        padding: sm ? "60px 20px" : isMobile ? "80px 32px" : "clamp(64px, 6vw, 100px) clamp(28px, 5vw, 64px)",
         maxWidth: 1200,
         margin: "0 auto",
       }}
@@ -901,12 +901,12 @@ function Projects() {
 
                 <h3
                   className="font-display"
-                  style={{ fontSize: sm ? 18 : 22, fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 12px" }}
+                  style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 12px" }}
                 >
                   {p.title}
                 </h3>
 
-                <p style={{ fontSize: 14, lineHeight: 1.7, color: "#6b6b68", margin: "0 0 24px", flexGrow: 1 }}>
+                <p style={{ fontSize: "clamp(0.875rem, 1vw, 0.9375rem)", lineHeight: 1.7, color: "#6b6b68", margin: "0 0 24px", flexGrow: 1 }}>
                   {p.desc}
                 </p>
 
@@ -971,8 +971,8 @@ function Skills() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        minHeight: "100svh",
-        padding: sm ? "36px 0 48px" : isMobile ? "48px 0 56px" : "64px 0",
+        minHeight: isMobile ? "auto" : "clamp(420px, 58vh, 680px)",
+        padding: sm ? "36px 0 48px" : isMobile ? "48px 0 56px" : "clamp(28px, 5vw, 56px) 0 clamp(32px, 5vw, 56px)",
       }}
     >
       <div
