@@ -64,138 +64,261 @@ export default function Mission() {
     },
   ]
 
-  return (
-    <section
-      id="mission"
+return (
+  <section
+    id="mission"
+    style={{
+      minHeight: isMobile ? "auto" : "100svh",
+      width: "100%",
+      maxWidth: 1200,
+      margin: "0 auto",
+      padding: sm
+        ? "72px 20px 100px"
+        : isMobile
+          ? "90px 28px 100px"
+          : "100px 64px 64px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      boxSizing: "border-box",
+      overflow: isMobile ? "visible" : "hidden",
+    }}
+  >
+    <div
       style={{
-        minHeight: isMobile ? "auto" : "clamp(520px, 72vh, 760px)",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: sm ? "72px 20px 100px" : isMobile ? "90px 28px 100px" : "100px 64px 64px",
-        maxWidth: 1200,
-        margin: "0 auto",
-      }}
-    >
-      <div style={{
+        width: "100%",
         display: "grid",
         gridTemplateColumns: isMobile ? "1fr" : "35fr 65fr",
         gap: isMobile ? 48 : 64,
-        alignItems: "start",
-      }}>
+        alignItems: isMobile ? "start" : "stretch",
+      }}
+    >
+      {/* Left: heading and introduction */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: isMobile ? "flex-start" : "center",
+          alignSelf: "stretch",
+          paddingBottom: isMobile ? 4 : 0,
+        }}
+      >
+        <Eyebrow>About me</Eyebrow>
 
-        {/* ── Left: heading + intro ── */}
-        <div style={{ position: isMobile ? "static" : "sticky", top: "50%", paddingBottom: isMobile ? 4 : 0 ,marginTop: isMobile ? 0 : 60}}>
-          <Eyebrow>About me</Eyebrow>
-          <SectionHeading style={{ lineHeight: 1.1, margin: "0 0 20px", fontSize: "clamp(2.3rem, 3vw, 4rem)" }}>
-            Building at the <em>intersection</em>
-            {" "}of AI and Education.
-          </SectionHeading>
-          <p style={{ fontSize: "clamp(15px, 1.2vw, 16px)", lineHeight: 1.8, color: "#6b6b68", margin: 0 }}>
-            The challenge isn't whether people use AI — it's helping them use it responsibly,
-            transparently, and effectively. I build deployable systems that sit at that boundary.
-          </p>
-        </div>
+        <SectionHeading
+          style={{
+            lineHeight: 1.1,
+            margin: "0 0 20px",
+            fontSize: "clamp(2.3rem, 3vw, 4rem)",
+          }}
+        >
+          Building at the <em>intersection</em> of AI and Education.
+        </SectionHeading>
 
-        {/* ── Right: tabs + panels ── */}
-        <div>
-
-      {/* Tab row */}
-      <div style={{
-        display: "flex",
-        gap: 0,
-        borderBottom: "1px solid rgba(17,17,16,0.10)",
-        marginBottom: sm ? 32 : 40,
-        overflowX: "auto",
-      }}>
-        {tabs.map((t, i) => (
-          <button
-            key={t}
-            onClick={() => setTab(i)}
-            style={{
-              background: "none",
-              border: "none",
-              borderBottom: tab === i ? "2px solid #111110" : "2px solid transparent",
-              marginBottom: -1,
-              padding: sm ? "12px 18px" : "14px 28px",
-              fontSize: sm ? 13 : 14,
-              fontWeight: 500,
-              color: tab === i ? "#111110" : "#9b9b98",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-              transition: "color 0.18s, border-color 0.18s",
-              letterSpacing: "0.02em",
-            }}
-          >
-            {t}
-          </button>
-        ))}
+        <p
+          style={{
+            fontSize: "clamp(15px, 1.2vw, 16px)",
+            lineHeight: 1.8,
+            color: "#6b6b68",
+            margin: 0,
+          }}
+        >
+          The challenge isn't whether people use AI, it's helping them use it
+          responsibly, transparently, and effectively. I build deployable
+          systems that sit at that boundary.
+        </p>
       </div>
 
-      {/* Tab panels */}
-      <div style={{ minHeight: sm ? 280 : 320 }}>
+      {/* Right: tabs and panels */}
+      <div
+        style={{
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+        {/* Tab row */}
+        <div
+          role="tablist"
+          aria-label="About me sections"
+          style={{
+            display: "flex",
+            gap: 0,
+            borderBottom: "1px solid rgba(17,17,16,0.10)",
+            marginBottom: sm ? 32 : 40,
+            overflowX: "auto",
+          }}
+        >
+          {tabs.map((t, i) => (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={tab === i}
+              aria-controls={`mission-panel-${i}`}
+              id={`mission-tab-${i}`}
+              onClick={() => setTab(i)}
+              style={{
+                flex: isMobile ? "0 0 auto" : 1,
+                background: "none",
+                border: "none",
+                borderBottom:
+                  tab === i
+                    ? "2px solid #111110"
+                    : "2px solid transparent",
+                marginBottom: -1,
+                padding: sm ? "12px 18px" : "14px 28px",
+                fontSize: sm ? 13 : 14,
+                fontWeight: 500,
+                color: tab === i ? "#111110" : "#9b9b98",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                transition: "color 0.18s, border-color 0.18s",
+                letterSpacing: "0.02em",
+              }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
 
-        {/* ── Education ── */}
-        {tab === 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 0, animation: "tab-in 0.22s ease" }}>
-            {education.map((e) => (
-              <div
-                key={e.degree}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: isMobile ? "1fr" : "160px 1fr",
-                  gap: isMobile ? 12 : 40,
-                  padding: sm ? "24px 0" : "32px 0",
-                  borderBottom: "1px solid rgba(17,17,16,0.08)",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", color: "#9b9b98", textTransform: "uppercase" }}>
-                    {e.period}
+        {/* Fixed-height panel area keeps the left column stable */}
+        <div
+          style={{
+            minHeight: isMobile ? 280 : 520,
+            position: "relative",
+          }}
+        >
+          {/* Education */}
+          {tab === 0 && (
+            <div
+              id="mission-panel-0"
+              role="tabpanel"
+              aria-labelledby="mission-tab-0"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 0,
+                animation: "tab-in 0.22s ease",
+              }}
+            >
+              {education.map((e) => (
+                <div
+                  key={e.degree}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: isMobile ? "1fr" : "160px 1fr",
+                    gap: isMobile ? 12 : 40,
+                    padding: sm ? "24px 0" : "32px 0",
+                    borderBottom: "1px solid rgba(17,17,16,0.08)",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        letterSpacing: "0.06em",
+                        color: "#9b9b98",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {e.period}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div
+                      className="font-display"
+                      style={{
+                        fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)",
+                        fontWeight: 400,
+                        letterSpacing: "-0.01em",
+                        marginBottom: 4,
+                      }}
+                    >
+                      {e.degree}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: "clamp(0.8rem, 0.9vw, 0.875rem)",
+                        color: "#6b6b68",
+                        marginBottom: 14,
+                      }}
+                    >
+                      {e.institution}
+                    </div>
+
+                    <p
+                      style={{
+                        fontSize: "clamp(0.875rem, 1vw, 0.9375rem)",
+                        lineHeight: 1.75,
+                        color: "#6b6b68",
+                        margin: "0 0 16px",
+                        maxWidth: 560,
+                      }}
+                    >
+                      {e.detail}
+                    </p>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 6,
+                      }}
+                    >
+                      {e.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 500,
+                            border: "1px solid rgba(17,17,16,0.14)",
+                            padding: "3px 10px",
+                            borderRadius: 100,
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="font-display" style={{ fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)", fontWeight: 400, letterSpacing: "-0.01em", marginBottom: 4 }}>
-                    {e.degree}
-                  </div>
-                  <div style={{ fontSize: "clamp(0.8rem, 0.9vw, 0.875rem)", color: "#6b6b68", marginBottom: 14 }}>{e.institution}</div>
-                  <p style={{ fontSize: "clamp(0.875rem, 1vw, 0.9375rem)", lineHeight: 1.75, color: "#6b6b68", margin: "0 0 16px", maxWidth: 560 }}>
-                    {e.detail}
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {e.tags.map((tag) => (
-                      <span key={tag} style={{ fontSize: 12, fontWeight: 500, border: "1px solid rgba(17,17,16,0.14)", padding: "3px 10px", borderRadius: 100 }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        {/* ── Focus ── */}
-        {tab === 1 && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)",
-              gap: isMobile ? 0 : 1,
-              border: "1px solid rgba(17,17,16,0.10)",
-              animation: "tab-in 0.22s ease",
-            }}
-          >
-            {focus.map((f, idx) => (
-              <div
-                key={f.area}
-                style={{
-                  padding: sm ? "24px 20px" : "32px 28px",
-                  borderRight: isMobile ? "none" : idx < focus.length - 1 ? "1px solid rgba(17,17,16,0.10)" : "none",
-                  borderBottom: isMobile && idx < focus.length - 1 ? "1px solid rgba(17,17,16,0.10)" : "none",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 14,
+          {/* Focus */}
+          {tab === 1 && (
+            <div
+              id="mission-panel-1"
+              role="tabpanel"
+              aria-labelledby="mission-tab-1"
+              style={{
+                display: "grid",
+                gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+                gap: isMobile ? 0 : 1,
+                border: "1px solid rgba(17,17,16,0.10)",
+                animation: "tab-in 0.22s ease",
+              }}
+            >
+              {focus.map((f, idx) => (
+                <div
+                  key={f.area}
+                  style={{
+                    padding: sm ? "24px 20px" : "32px 28px",
+                    borderRight:
+                      isMobile || idx === focus.length - 1
+                        ? "none"
+                        : "1px solid rgba(17,17,16,0.10)",
+                    borderBottom:
+                      isMobile && idx < focus.length - 1
+                        ? "1px solid rgba(17,17,16,0.10)"
+                        : "none",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
                 }}
               >
                 <span style={{ fontSize: 22, lineHeight: 1 }}>{f.icon}</span>
