@@ -11,7 +11,7 @@ export default function Mission() {
 
   const education = [
     {
-      period: "2022 – 2026",
+      period: "2023 – Present",
       degree: "B.Sc. Learning Design & Technology",
       institution: "Chinese University of Hong Kong (CUHK)",
       detail: "Final-year project on AI writing declaration toolkits. Coursework spans educational technology, AI literacy, learning analytics, and instructional design.",
