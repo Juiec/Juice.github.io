@@ -191,7 +191,20 @@ export default function Projects() {
                   </a>
                 </h3>
 
-                <p style={{ fontSize: "clamp(0.875rem, 1vw, 0.9375rem)", lineHeight: 1.7, color: "#6b6b68", margin: "0 0 24px", flexGrow: 1 }}>
+                <p
+                  className="project-desc"
+                  style={{
+                    fontSize: "clamp(0.875rem, 1vw, 0.9375rem)",
+                    lineHeight: 1.7,
+                    color: "#6b6b68",
+                    margin: "0 0 24px",
+                    flexGrow: 1,
+                    opacity: 0,
+                    maxHeight: 0,
+                    overflow: "hidden",
+                    transition: "opacity 0.3s ease, max-height 0.3s ease",
+                  }}
+                >
                   {p.desc}
                 </p>
 

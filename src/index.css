@@ -154,6 +154,14 @@ body {
   transform: translateY(-2px);
 }
 
+.card:hover .project-desc {
+  opacity: 1;
+  max-height: 120px;
+}
+
+.card:hover .project-tech {
+  opacity: 1;
+}
 /* ─── Primary button ────────────────────────────────────────────────────────── */
 
 .btn-primary {
