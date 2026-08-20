@@ -11,7 +11,7 @@ export default function Mission() {
 
   const education = [
     {
-      period: "2023 – Present",
+      period: "2023 – 2027(Expected)",
       degree: "B.Sc. Learning Design & Technology",
       institution: "Chinese University of Hong Kong (CUHK)",
       detail: "Final-year project on AI writing declaration toolkits. Coursework spans educational technology, AI literacy, learning analytics, and instructional design.",
@@ -42,26 +42,29 @@ export default function Mission() {
 
   const experience = [
     {
-      period: "2026 — Present",
+      period: "2026",
       role: "AI Engineer",
       org: "Autonomous Patrolling Project",
       type: "Contract",
       desc: "Developing an autonomous patrolling system integrating YOLO-based detection with edge AI hardware. Responsible for the full CV pipeline and deployment.",
     },
+
+    {
+      period: "2026",
+      role: "CV Engineer",
+      org: "Smart Smoking Detection",
+      type: "Project",
+      desc: "Implemented real-time smoking detection using YOLOE-26 and MediaPipe pose estimation with temporal verification to reduce false positives.",
+    },
+
     {
       period: "2024 — 2025",
       role: "Computer Vision Researcher",
       org: "Figure Skating AI Project",
       type: "Research",
       desc: "Built an AI-assisted judging system using VideoPose3D for 3D skeleton reconstruction and YOLO for athlete detection across broadcast footage.",
-    },
-    {
-      period: "2024",
-      role: "CV Engineer",
-      org: "Smart Smoking Detection",
-      type: "Project",
-      desc: "Implemented real-time smoking detection using YOLOE-26 and MediaPipe pose estimation with temporal verification to reduce false positives.",
-    },
+    }
+    
   ]
 
 return (

@@ -14,6 +14,8 @@ export default function Projects() {
       desc: "A non-punitive AI writing declaration toolkit to promote responsible authorship. Focuses on AI literacy and academic integrity.",
       tech: ["FYP", "AI Literacy", "React"],
       tag: "EdTech",
+      gif: "/gifs/writing-toolkit.gif",
+      link: "https://github.com/yourname/writing-toolkit",
     },
     {
       title: "Smart Smoking Detection",
@@ -21,6 +23,8 @@ export default function Projects() {
       desc: "Real-time detection using YOLOE-26 and MediaPipe pose estimation. Reduces false positives via temporal verification logic.",
       tech: ["Python", "YOLOE", "OpenCV"],
       tag: "Computer Vision",
+      gif: "/gifs/smoking-detection.gif",
+      link: "https://github.com/yourname/smoking-detection",
     },
     {
       title: "Figure Skating AI",
@@ -28,6 +32,8 @@ export default function Projects() {
       desc: "AI-assisted judging system using YOLO for detection and VideoPose3D for 2D-to-3D skeleton reconstruction.",
       tech: ["Python", "VideoPose3D", "YOLO"],
       tag: "Research",
+      gif: "/gifs/skating-ai.gif",
+      link: "https://github.com/yourname/skating-ai",
     },
     {
       title: "AI-Powered Autonomous Patrolling",
@@ -35,6 +41,8 @@ export default function Projects() {
       desc: "Autonomous AI patrolling system integrating computer vision and edge AI.",
       tech: ["Python", "YOLO", "Edge AI"],
       tag: "Computer Vision",
+      gif: "/gifs/patrolling.gif",
+      link: "https://github.com/yourname/patrolling",
     },
     {
       title: "Another Project",
@@ -42,6 +50,8 @@ export default function Projects() {
       desc: "Project description.",
       tech: ["React", "TypeScript"],
       tag: "Development",
+      gif: "/gifs/another-project.gif",
+      link: "https://github.com/yourname/another-project",
     },
   ]
 
@@ -125,6 +135,27 @@ export default function Projects() {
                   e.currentTarget.style.transform = hidden ? "translateY(40px)" : "translateY(0)"
                 }}
               >
+                <div
+                  style={{
+                    width: "100%",
+                    aspectRatio: "16/9",
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    marginBottom: 20,
+                    background: "rgba(17,17,16,0.05)",
+                  }}
+                >
+                  <img
+                    src={p.gif}
+                    alt={p.title}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
                   <span
                     style={{
@@ -147,7 +178,17 @@ export default function Projects() {
                   className="font-display"
                   style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 12px" }}
                 >
-                  {p.title}
+                  <a
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "inherit",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {p.title}
+                  </a>
                 </h3>
 
                 <p style={{ fontSize: "clamp(0.875rem, 1vw, 0.9375rem)", lineHeight: 1.7, color: "#6b6b68", margin: "0 0 24px", flexGrow: 1 }}>
